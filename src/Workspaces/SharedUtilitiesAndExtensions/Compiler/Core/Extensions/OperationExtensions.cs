@@ -133,7 +133,7 @@ namespace Microsoft.CodeAnalysis
             else if (operation.Parent is IParenthesizedOperation parenthesizedOperation)
             {
                 // Note: IParenthesizedOperation is specific to VB, where the parens cause a copy, so this cannot be classified as a write.
-                Debug.Assert(parenthesizedOperation.Language == LanguageNames.VisualBasic);
+                Debug.Assert(false);
 
                 return parenthesizedOperation.GetValueUsageInfo(containingSymbol) &
                     ~(ValueUsageInfo.Write | ValueUsageInfo.Reference);

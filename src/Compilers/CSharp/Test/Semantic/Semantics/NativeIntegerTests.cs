@@ -71,12 +71,10 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests.Semantics
 
             var method = comp.GetMember<MethodSymbol>("I.F1");
             Assert.Equal("void I.F1(System.IntPtr x, nint y)", method.ToTestDisplayString());
-            Assert.Equal("Sub I.F1(x As System.IntPtr, y As System.IntPtr)", VisualBasic.SymbolDisplay.ToDisplayString(method.GetPublicSymbol(), SymbolDisplayFormat.TestFormat));
             VerifyTypes((NamedTypeSymbol)method.Parameters[0].Type, (NamedTypeSymbol)method.Parameters[1].Type, signed: true);
 
             method = comp.GetMember<MethodSymbol>("I.F2");
             Assert.Equal("void I.F2(System.UIntPtr x, nuint y)", method.ToTestDisplayString());
-            Assert.Equal("Sub I.F2(x As System.UIntPtr, y As System.UIntPtr)", VisualBasic.SymbolDisplay.ToDisplayString(method.GetPublicSymbol(), SymbolDisplayFormat.TestFormat));
             VerifyTypes((NamedTypeSymbol)method.Parameters[0].Type, (NamedTypeSymbol)method.Parameters[1].Type, signed: false);
         }
 
@@ -2214,134 +2212,6 @@ class Program
                 var actualMembers = members.SelectAsArray(m => m.ToTestDisplayString());
                 var expectedMembers = new[]
                 {
-                    $"{type}..ctor()",
-                };
-                AssertEx.Equal(expectedMembers, actualMembers);
-
-                VerifyMembers(underlyingType, type, signed);
-                VerifyMembers(underlyingType.GetPublicSymbol(), type.GetPublicSymbol(), signed);
-            }
-        }
-
-        [Fact]
-        public void ExplicitImplementations_02()
-        {
-            var sourceA =
-@"Namespace System
-    Public Class [Object]
-    End Class
-    Public Class [String]
-    End Class
-    Public MustInherit Class ValueType
-    End Class
-    Public Structure Void
-    End Structure
-    Public Structure [Boolean]
-    End Structure
-    Public Structure Int32
-    End Structure
-    Public Structure Int64
-    End Structure
-    Public Structure UInt32
-    End Structure
-    Public Structure UInt64
-    End Structure
-    Public Interface I(Of T)
-        ReadOnly Property P As T
-        Function F() As T
-    End Interface
-    Public Structure IntPtr
-        Implements I(Of IntPtr)
-        Public ReadOnly Property P As IntPtr Implements I(Of IntPtr).P
-            Get
-                Return Nothing
-            End Get
-        End Property
-        Public Function F() As IntPtr Implements I(Of IntPtr).F
-            Return Nothing
-        End Function
-    End Structure
-    Public Structure UIntPtr
-        Implements I(Of UIntPtr)
-        Public ReadOnly Property P As UIntPtr Implements I(Of UIntPtr).P
-            Get
-                Return Nothing
-            End Get
-        End Property
-        Public Function F() As UIntPtr Implements I(Of UIntPtr).F
-            Return Nothing
-        End Function
-    End Structure
-End Namespace";
-            var compA = CreateVisualBasicCompilation(sourceA, referencedAssemblies: Array.Empty<MetadataReference>());
-            compA.VerifyDiagnostics();
-            var refA = compA.EmitToImageReference();
-
-            var sourceB =
-@"using System;
-class Program
-{
-    static T F1<T>(I<T> t)
-    {
-        return default;
-    }
-    static I<T> F2<T>(I<T> t)
-    {
-        return t;
-    }
-    static void M1(nint x)
-    {
-        var x1 = F1(x);
-        var x2 = F2(x).P;
-        _ = x.P;
-        _ = x.F();
-    }
-    static void M2(nuint y)
-    {
-        var y1 = F1(y);
-        var y2 = F2(y).P;
-        _ = y.P;
-        _ = y.F();
-    }
-}";
-            var compB = CreateEmptyCompilation(sourceB, references: new[] { refA }, parseOptions: TestOptions.RegularPreview);
-            compB.VerifyDiagnostics();
-
-            var tree = compB.SyntaxTrees[0];
-            var model = compB.GetSemanticModel(tree);
-            var actualLocals = tree.GetRoot().DescendantNodes().OfType<VariableDeclaratorSyntax>().Select(d => model.GetDeclaredSymbol(d).ToTestDisplayString());
-            var expectedLocals = new[]
-            {
-                "nint x1",
-                "nint x2",
-                "nuint y1",
-                "nuint y2",
-            };
-            AssertEx.Equal(expectedLocals, actualLocals);
-
-            verifyType((NamedTypeSymbol)compB.GetMember<MethodSymbol>("Program.M1").Parameters[0].Type, signed: true);
-            verifyType((NamedTypeSymbol)compB.GetMember<MethodSymbol>("Program.M2").Parameters[0].Type, signed: false);
-
-            static void verifyType(NamedTypeSymbol type, bool signed)
-            {
-                Assert.True(type.IsNativeIntegerType);
-
-                VerifyType(type, signed: signed, isNativeInt: true);
-                VerifyType(type.GetPublicSymbol(), signed: signed, isNativeInt: true);
-
-                var underlyingType = type.NativeIntegerUnderlyingType;
-                var members = type.GetMembers().Sort(SymbolComparison);
-                foreach (var member in members)
-                {
-                    Assert.True(member.GetExplicitInterfaceImplementations().IsEmpty);
-                }
-
-                var actualMembers = members.SelectAsArray(m => m.ToTestDisplayString());
-                var expectedMembers = new[]
-                {
-                    $"{type} {type}.F()",
-                    $"{type} {type}.P {{ get; }}",
-                    $"{type} {type}.P.get",
                     $"{type}..ctor()",
                 };
                 AssertEx.Equal(expectedMembers, actualMembers);

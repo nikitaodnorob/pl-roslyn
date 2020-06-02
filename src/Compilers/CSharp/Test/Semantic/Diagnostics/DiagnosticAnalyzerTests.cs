@@ -863,7 +863,7 @@ public class B
                      .WithLocation(1, 1));
         }
 
-        [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class AnalyzerReportingUnsupportedDiagnostic : DiagnosticAnalyzer
         {
             public static readonly DiagnosticDescriptor SupportedDescriptor =

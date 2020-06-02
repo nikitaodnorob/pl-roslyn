@@ -94,15 +94,6 @@ namespace Microsoft.CodeAnalysis.UnitTests
             Assert.Contains("Microsoft.CodeAnalysis.UnitTests.AbstractAnalyzer", analyzerTypeNameMap[LanguageNames.CSharp]);
             Assert.Contains("Microsoft.CodeAnalysis.UnitTests.OpenGenericAnalyzer`1", analyzerTypeNameMap[LanguageNames.CSharp]);
             Assert.DoesNotContain("Microsoft.CodeAnalysis.UnitTests.Test.NotAnAnalyzer", analyzerTypeNameMap[LanguageNames.CSharp]);
-
-            Assert.Equal(6, analyzerTypeNameMap[LanguageNames.VisualBasic].Count);
-            Assert.Contains("Microsoft.CodeAnalysis.UnitTests.AnalyzerFileReferenceTests+TestAnalyzerVB", analyzerTypeNameMap[LanguageNames.VisualBasic]);
-            Assert.Contains("Microsoft.CodeAnalysis.UnitTests.TestAnalyzerCSVB", analyzerTypeNameMap[LanguageNames.VisualBasic]);
-            Assert.Contains("Microsoft.CodeAnalysis.UnitTests.AnalyzerFileReferenceTests+TestAnalyzer", analyzerTypeNameMap[LanguageNames.VisualBasic]);
-            Assert.Contains("Microsoft.CodeAnalysis.UnitTests.AnalyzerFileReferenceTests+SomeType+NestedAnalyzer", analyzerTypeNameMap[LanguageNames.VisualBasic]);
-            Assert.Contains("Microsoft.CodeAnalysis.UnitTests.AbstractAnalyzer", analyzerTypeNameMap[LanguageNames.VisualBasic]);
-            Assert.Contains("Microsoft.CodeAnalysis.UnitTests.OpenGenericAnalyzer`1", analyzerTypeNameMap[LanguageNames.VisualBasic]);
-            Assert.DoesNotContain("Microsoft.CodeAnalysis.UnitTests.Test.NotAnAnalyzer", analyzerTypeNameMap[LanguageNames.VisualBasic]);
         }
 
         [Fact]
@@ -115,14 +106,6 @@ namespace Microsoft.CodeAnalysis.UnitTests
             Assert.Contains("TestAnalyzer", analyzerNames);
             Assert.Contains("TestAnalyzerCS", analyzerNames);
             Assert.Contains("TestAnalyzerCSVB", analyzerNames);
-            Assert.Contains("NestedAnalyzer", analyzerNames);
-
-            analyzers = reference.GetAnalyzers(LanguageNames.VisualBasic);
-            analyzerNames = analyzers.Select(a => a.GetType().Name);
-            Assert.Equal(4, analyzers.Length);
-            Assert.Contains("TestAnalyzerVB", analyzerNames);
-            Assert.Contains("TestAnalyzerCSVB", analyzerNames);
-            Assert.Contains("TestAnalyzer", analyzerNames);
             Assert.Contains("NestedAnalyzer", analyzerNames);
         }
 
@@ -267,7 +250,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
             Assert.DoesNotContain("Microsoft.CodeAnalysis.UnitTests.NotAGenerator", typeNames);
         }
 
-        [DiagnosticAnalyzer(LanguageNames.CSharp, new string[] { LanguageNames.VisualBasic })]
+        [DiagnosticAnalyzer(LanguageNames.CSharp, new string[] { })]
         public class TestAnalyzer : DiagnosticAnalyzer
         {
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { throw new NotImplementedException(); } }
@@ -276,13 +259,6 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class TestAnalyzerCS : DiagnosticAnalyzer
-        {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { throw new NotImplementedException(); } }
-            public override void Initialize(AnalysisContext context) { throw new NotImplementedException(); }
-        }
-
-        [DiagnosticAnalyzer(LanguageNames.VisualBasic, new string[] { })]
-        public class TestAnalyzerVB : DiagnosticAnalyzer
         {
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { throw new NotImplementedException(); } }
             public override void Initialize(AnalysisContext context) { throw new NotImplementedException(); }
@@ -297,7 +273,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
         public class SomeType
         {
-            [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+            [DiagnosticAnalyzer(LanguageNames.CSharp)]
             public class NestedAnalyzer : DiagnosticAnalyzer
             {
                 public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { throw new NotImplementedException(); } }
@@ -330,7 +306,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
         public class NotAGenerator { }
     }
 
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class TestAnalyzerCSVB : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { throw new NotImplementedException(); } }
@@ -340,14 +316,14 @@ namespace Microsoft.CodeAnalysis.UnitTests
     public class TestAnalyzerNone
     { }
 
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public abstract class AbstractAnalyzer : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { throw new NotImplementedException(); } }
         public override void Initialize(AnalysisContext context) { throw new NotImplementedException(); }
     }
 
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class OpenGenericAnalyzer<T> : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { throw new NotImplementedException(); } }

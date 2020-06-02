@@ -44,7 +44,6 @@ namespace Microsoft.CodeAnalysis.SolutionCrawler
             switch (language)
             {
                 case LanguageNames.CSharp:
-                case LanguageNames.VisualBasic:
                     return options.GetOption(BackgroundAnalysisScopeOption, language);
 
                 default:

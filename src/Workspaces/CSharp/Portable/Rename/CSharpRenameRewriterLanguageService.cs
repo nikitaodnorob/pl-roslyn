@@ -927,7 +927,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Rename
                 {
                     var property = ((IMethodSymbol)symbol).AssociatedSymbol!;
 
-                    return property.Language == LanguageNames.VisualBasic ? property : null;
+                    return null;
                 }
 
                 if (symbol.IsOverride && symbol.OverriddenMember() != null)

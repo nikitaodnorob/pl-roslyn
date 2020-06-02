@@ -136,10 +136,6 @@ namespace Microsoft.CodeAnalysis.UnitTests.Diagnostics
                 {
                     analysisContext.RegisterCodeBlockStartAction<CSharp.SyntaxKind>(new CSharpCodeBodyAnalyzer().Initialize);
                 }
-                else
-                {
-                    analysisContext.RegisterCodeBlockStartAction<VisualBasic.SyntaxKind>(new BasicCodeBodyAnalyzer().Initialize);
-                }
             }
 
             protected class CSharpCodeBodyAnalyzer
@@ -158,25 +154,6 @@ namespace Microsoft.CodeAnalysis.UnitTests.Diagnostics
                                 context.ReportDiagnostic(CodeAnalysis.Diagnostic.Create(s_rule, context.Node.GetLocation(), messageArgs: context.Node.ToFullString()));
                             },
                         CSharp.SyntaxKind.InvocationExpression);
-                }
-            }
-
-            protected class BasicCodeBodyAnalyzer
-            {
-                public void Initialize(CodeBlockStartAnalysisContext<VisualBasic.SyntaxKind> analysisContext)
-                {
-                    analysisContext.RegisterCodeBlockEndAction(
-                        (context) =>
-                            {
-                                context.ReportDiagnostic(CodeAnalysis.Diagnostic.Create(s_rule, context.OwningSymbol.Locations.First(), messageArgs: context.OwningSymbol.Name + ":end"));
-                            });
-
-                    analysisContext.RegisterSyntaxNodeAction(
-                        (context) =>
-                            {
-                                context.ReportDiagnostic(CodeAnalysis.Diagnostic.Create(s_rule, context.Node.GetLocation(), messageArgs: context.Node.ToFullString()));
-                            },
-                        VisualBasic.SyntaxKind.InvocationExpression);
                 }
             }
         }
@@ -203,8 +180,7 @@ namespace Microsoft.CodeAnalysis.UnitTests.Diagnostics
                             var comments = context.Tree.GetRoot().DescendantTrivia()
                                .Where(t =>
                                    t.IsKind(SyntaxKind.SingleLineCommentTrivia) ||
-                                   t.IsKind(SyntaxKind.MultiLineCommentTrivia) ||
-                                   t.IsKind(VisualBasic.SyntaxKind.CommentTrivia));
+                                   t.IsKind(SyntaxKind.MultiLineCommentTrivia));
 
                             foreach (var comment in comments)
                             {

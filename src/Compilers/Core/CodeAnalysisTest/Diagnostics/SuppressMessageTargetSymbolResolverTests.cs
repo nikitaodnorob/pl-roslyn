@@ -6,7 +6,6 @@ using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CodeAnalysis.VisualBasic;
 using Roslyn.Test.Utilities;
 using Xunit;
 using System.Collections.Generic;
@@ -23,15 +22,6 @@ namespace Microsoft.CodeAnalysis.UnitTests.Diagnostics
         }
 
         [Fact]
-        public void TestResolveGlobalNamespace2()
-        {
-            VerifyNamespaceResolution(@"
-Namespace $$N 
-End Namespace",
-                LanguageNames.VisualBasic, false, "N");
-        }
-
-        [Fact]
         public void TestResolveNestedNamespace1()
         {
             VerifyNamespaceResolution(@"
@@ -45,17 +35,6 @@ namespace A
                 LanguageNames.CSharp, false, "A.B.C");
         }
 
-        [Fact]
-        public void TestResolveNestedNamespace2()
-        {
-            VerifyNamespaceResolution(@"
-Namespace A
-    Namespace B.$$C
-    End Namespace
-End Namespace
-",
-                LanguageNames.VisualBasic, false, "A.B.C");
-        }
 
         [Fact]
         public void TestResolveNamespaceWithSameNameAsGenericInterface1()
@@ -69,18 +48,6 @@ interface IGoo<T>
 }
 ",
                 LanguageNames.CSharp, false, "IGoo");
-        }
-
-        [Fact]
-        public void TestResolveNamespaceWithSameNameAsGenericInterface2()
-        {
-            VerifyNamespaceResolution(@"
-Namespace $$IGoo
-End Namespace
-Interface IGoo(Of T)
-End Interface
-",
-                LanguageNames.VisualBasic, false, "IGoo");
         }
 
         [Fact]
@@ -98,74 +65,9 @@ namespace A
         }
 
         [Fact]
-        public void TestDontPartiallyResolveNamespace2()
-        {
-            VerifyNoNamespaceResolution(@"
-Namespace A
-    Namespace B
-    End Namespace
-End Namespace
-",
-                LanguageNames.VisualBasic, false, "A+B", "A#B");
-        }
-
-        [Fact]
         public void TestResolveGlobalType1()
         {
             VerifyTypeResolution("class $$C {}", LanguageNames.CSharp, false, "C");
-        }
-
-        [Fact]
-        public void TestResolveGlobalType2()
-        {
-            VerifyTypeResolution(@"
-Class $$C
-End Class",
-                LanguageNames.VisualBasic, false, "C");
-        }
-
-        [Fact]
-        public void TestResolveModule()
-        {
-            VerifyTypeResolution(@"
-Module $$C
-End Module",
-                LanguageNames.VisualBasic, false, "C");
-        }
-
-        [Fact]
-        public void TestResolveTypeInModule()
-        {
-            VerifyTypeResolution(@"
-Module M
-    Class $$C
-    End Class
-End Module",
-                LanguageNames.VisualBasic, false, "M+C");
-        }
-
-        [Fact]
-        public void TestDontPartiallyResolveTypeInModule()
-        {
-            VerifyNoTypeResolution(@"
-Module M
-    Class C
-    End Class
-End Module",
-                LanguageNames.VisualBasic, false, "M.C");
-        }
-
-        [Fact]
-        public void TestNestedTypesInModule()
-        {
-            VerifyTypeResolution(@"
-Module M
-    Class C
-        Structure $$D
-        End Structure
-    End Class
-End Module",
-                LanguageNames.VisualBasic, false, "M+C+D");
         }
 
         [Fact]
@@ -183,18 +85,6 @@ namespace N1.N2
         }
 
         [Fact]
-        public void TestResolveTypeInNamespace2()
-        {
-            VerifyTypeResolution(@"
-Namespace N1.N2
-    Class $$C
-    End Class
-End Namespace
-",
-                LanguageNames.VisualBasic, false, "N1.N2.C");
-        }
-
-        [Fact]
         public void TestResolveTypeNestedInGlobalType1()
         {
             VerifyTypeResolution(@"
@@ -206,17 +96,6 @@ class C
 }
 ",
                 LanguageNames.CSharp, false, "C+D");
-        }
-
-        [Fact]
-        public void TestResolveTypeNestedInGlobalType2()
-        {
-            VerifyTypeResolution(@"
-Class C
-     Public Delegate Sub $$D()
-End Class
-",
-                LanguageNames.VisualBasic, false, "C+D");
         }
 
         [Fact]
@@ -239,22 +118,6 @@ namespace N
         }
 
         [Fact]
-        public void TestResolveNestedType2()
-        {
-            VerifyTypeResolution(@"
-Namespace N
-    Class C
-        Class D
-            Class $$E
-            End Class
-        End Class
-    End Class
-End Namespace
-",
-                LanguageNames.VisualBasic, false, "N.C+D+E");
-        }
-
-        [Fact]
         public void TestResolveGenericType1()
         {
             VerifyTypeResolution(@"
@@ -269,18 +132,6 @@ class $$D<T1, T2, T3>
         }
 
         [Fact]
-        public void TestResolveGenericType2()
-        {
-            VerifyTypeResolution(@"
-Class D(Of T)
-End Class
-Class $$D(Of T1, T2, T3)
-End Class
-",
-                LanguageNames.VisualBasic, false, "D`3");
-        }
-
-        [Fact]
         public void TestDontResolveGenericType1()
         {
             VerifyNoTypeResolution(@"
@@ -289,28 +140,6 @@ class D<T1, T2, T3>
 }
 ",
                 LanguageNames.CSharp, false, "D");
-        }
-
-        [Fact]
-        public void TestDontResolveGenericType2()
-        {
-            VerifyNoTypeResolution(@"
-Class D(Of T1, T2, T3)
-End Class
-",
-                LanguageNames.VisualBasic, false, "D");
-        }
-
-        [Fact]
-        public void TestResolveRootNamespace()
-        {
-            VerifyTypeResolution(@"
-Module M
-    Class $$C
-    End Class
-End Module
-",
-                LanguageNames.VisualBasic, true, "RootNamespace.M+C");
         }
 
         [Fact]
@@ -328,18 +157,6 @@ class A
         }
 
         [Fact]
-        public void TestDontPartiallyResolveType2()
-        {
-            VerifyNoTypeResolution(@"
-Class A
-    Class B
-    End Class
-End Class
-",
-                LanguageNames.VisualBasic, false, "A.B");
-        }
-
-        [Fact]
         public void TestResolveField1()
         {
             VerifyMemberResolution(@"
@@ -349,19 +166,6 @@ class C
 }
 ",
                 LanguageNames.CSharp, false,
-                "C.#s",
-                "C.s");
-        }
-
-        [Fact]
-        public void TestResolveField2()
-        {
-            VerifyMemberResolution(@"
-Class C
-    Dim $$s As String
-End Class
-",
-                LanguageNames.VisualBasic, false,
                 "C.#s",
                 "C.s");
         }
@@ -381,24 +185,6 @@ class C
         }
 
         [Fact]
-        public void TestResolveProperty2()
-        {
-            VerifyMemberResolution(@"
-Class C
-    Public Property $$StringProperty 
-        Get 
-        End Get
-        Set
-        End Set
-    End Property
-End Class
-",
-                LanguageNames.VisualBasic, false,
-                "C.#StringProperty",
-                "C.StringProperty");
-        }
-
-        [Fact]
         public void TestResolveEvent1()
         {
             VerifyMemberResolution(@"
@@ -408,19 +194,6 @@ class C
 }
 ",
                 LanguageNames.CSharp, false,
-                "e:C.#E",
-                "C.E");
-        }
-
-        [Fact]
-        public void TestResolveEvent2()
-        {
-            VerifyMemberResolution(@"
-Class C
-    Public Event $$E As System.EventHandler(Of Integer)
-End Class
-",
-                LanguageNames.VisualBasic, false,
                 "e:C.#E",
                 "C.E");
         }
@@ -438,17 +211,6 @@ public class C
         }
 
         [Fact]
-        public void TestDontResolveNonEvent2()
-        {
-            VerifyNoMemberResolution(@"
-Public Class C
-    Public Dim E As Integer
-End Class
-",
-               LanguageNames.VisualBasic, false, "e:C.E");
-        }
-
-        [Fact]
         public void TestResolvePropertySetMethod1()
         {
             VerifyMemberResolution(@"
@@ -458,24 +220,6 @@ class C
 }
 ",
                 LanguageNames.CSharp, false,
-                "C.#set_StringProperty(System.String)",
-                "C.set_StringProperty(System.String):System.Void");
-        }
-
-        [Fact]
-        public void TestResolvePropertySetMethod2()
-        {
-            VerifyMemberResolution(@"
-Class C
-    Public Property StringProperty As String
-        Get
-        End Get
-        $$Set
-        End Set
-    End Property
-End Class
-",
-                LanguageNames.VisualBasic, false,
                 "C.#set_StringProperty(System.String)",
                 "C.set_StringProperty(System.String):System.Void");
         }
@@ -535,24 +279,6 @@ class C
         }
 
         [Fact]
-        public void TestResolveVoidMethod2()
-        {
-            VerifyMemberResolution(@"
-Class C
-    Sub Goo() 
-    End Sub
-    Sub $$Goo(ByVal x as Integer)
-    End Sub
-    Sub Goo(ByVal x as String)
-    End Sub
-End Class
-",
-            LanguageNames.VisualBasic, false,
-            "C.#Goo(System.Int32)",
-            "C.Goo(System.Int32):System.Void");
-        }
-
-        [Fact]
         public void TestResolveMethod1()
         {
             VerifyMemberResolution(@"
@@ -564,24 +290,6 @@ class C
 }
 ",
             LanguageNames.CSharp, false,
-            "C.#Goo(System.String)",
-            "C.Goo(System.String):System.String");
-        }
-
-        [Fact]
-        public void TestResolveMethod2()
-        {
-            VerifyMemberResolution(@"
-Class C
-    Sub Goo() 
-    End Sub
-    Function Goo(ByVal x As Integer) As String
-    End Function
-    Function $$Goo(ByVal x As String) As String 
-    End Function
-End Class
-",
-            LanguageNames.VisualBasic, false,
             "C.#Goo(System.String)",
             "C.Goo(System.String):System.String");
         }
@@ -611,32 +319,6 @@ class C
         }
 
         [Fact]
-        public void TestResolveOverloadedGenericMethod2()
-        {
-            VerifyMemberResolution(@"
-Class C
-    Function Goo(Of T)(ByVal x As T) As Integer
-    End Function
-    Function $$Goo(Of T)(ByVal x As T, ByVal y as T()) As Integer
-    End Function
-End Class
-",
-                LanguageNames.VisualBasic, false,
-                "C.#Goo`1(!!0,!!0[])",
-                "C.Goo(T,T[]):System.Int32");
-
-            VerifyMemberResolution(@"
-Class C
-    Function [|Goo|](Of T)(ByVal x As T) As Integer
-    End Function
-    Function [|Goo|](Of T)(ByVal x As T, ByVal y As T) As Integer
-    End Function
-End Class
-",
-                LanguageNames.VisualBasic, false, "C.Goo():System.Int32");
-        }
-
-        [Fact]
         public void TestResolveMethodOverloadedOnArity1()
         {
             VerifyMemberResolution(@"
@@ -659,26 +341,6 @@ interface I
         }
 
         [Fact]
-        public void TestResolveMethodOverloadedOnArity2()
-        {
-            VerifyMemberResolution(@"
-Interface I
-    Sub M(Of T)
-    Sub $$M(Of T1, T2)
-End Interface
-",
-                LanguageNames.VisualBasic, false, "I.#M`2()");
-
-            VerifyMemberResolution(@"
-Interface I
-    Sub [|M|](Of T)
-    Sub [|M|](Of T1, T2)
-End Interface
-",
-                LanguageNames.VisualBasic, false, "I.M():System.Void");
-        }
-
-        [Fact]
         public void TestResolveConstructor1()
         {
             VerifyMemberResolution(@"
@@ -693,20 +355,6 @@ class C
         }
 
         [Fact]
-        public void TestResolveConstructor2()
-        {
-            VerifyMemberResolution(@"
-Class C
-    Sub $$New()
-    End Sub
-End Class
-",
-                LanguageNames.VisualBasic, false,
-                "C.#.ctor()",
-                "C..ctor()");
-        }
-
-        [Fact]
         public void TestResolveStaticConstructor1()
         {
             VerifyMemberResolution(@"
@@ -716,20 +364,6 @@ class C
 }
 ",
                 LanguageNames.CSharp, false,
-                "C.#.cctor()",
-                "C..cctor()");
-        }
-
-        [Fact]
-        public void TestResolveStaticConstructor2()
-        {
-            VerifyMemberResolution(@"
-Class C
-    Shared Sub $$New()
-    End Sub
-End Class
-",
-                LanguageNames.VisualBasic, false,
                 "C.#.cctor()",
                 "C..cctor()");
         }
@@ -752,21 +386,6 @@ class C
         }
 
         [Fact]
-        public void TestResolveSimpleOperator2()
-        {
-            VerifyMemberResolution(@"
-Class C
-    Public Shared Operator $$+(a as C, b as C) As Boolean
-        return true
-    End Operator
-End Class
-",
-                LanguageNames.VisualBasic, false,
-                "C.#op_Addition(C,C)",
-                "C.op_Addition(C,C):System.Boolean");
-        }
-
-        [Fact]
         public void TestResolveIndexer1()
         {
             VerifyMemberResolution(@"
@@ -784,29 +403,6 @@ class C
 }
 ",
                 LanguageNames.CSharp, false,
-                "C.#Item[System.Int32,System.String]",
-                "C.Item[System.Int32,System.String]");
-        }
-
-        [Fact]
-        public void TestResolveIndexer2()
-        {
-            VerifyMemberResolution(@"
-Class C
-	Public Default ReadOnly Property $$Item(i As Integer, j As String) As C
-		Get
-			Return Me
-		End Get
-	End Property
-
-	Public Default ReadOnly Property Item(i As String) As C
-		Get
-			Return Me
-		End Get
-	End Property
-End Class
-",
-                LanguageNames.VisualBasic, false,
                 "C.#Item[System.Int32,System.String]",
                 "C.Item[System.Int32,System.String]");
         }
@@ -873,20 +469,6 @@ class C
         }
 
         [Fact]
-        public void TestResolveMethodWithComplexParameterTypes2()
-        {
-            VerifyMemberResolution(@"
-Class C
-	Public Shared Function $$IsComplex(Of T0, T1)(a As Integer, ByRef b As Integer, ByRef c As T0, d As T1()) As Boolean
-		Return True
-	End Function
-End Class",
-                LanguageNames.VisualBasic, false,
-                "C.#IsComplex`2(System.Int32,System.Int32&,!!0&,!!1[])",
-                "C.IsComplex(System.Int32,System.Int32&,T0&,T1[]):System.Boolean");
-        }
-
-        [Fact]
         public void TestFinalize1()
         {
             VerifyMemberResolution(@"
@@ -898,24 +480,6 @@ class A
 }
 ",
                 LanguageNames.CSharp, false,
-                "A.#Finalize()",
-                "A.Finalize():System.Void");
-        }
-
-        [Fact]
-        public void TestFinalize2()
-        {
-            VerifyMemberResolution(@"
-Class A
-	Protected Overrides Sub $$Finalize()
-		Try
-		Finally
-			MyBase.Finalize()
-		End Try
-	End Sub
-End Class
-",
-                LanguageNames.VisualBasic, false,
                 "A.#Finalize()",
                 "A.Finalize():System.Void");
         }
@@ -933,21 +497,6 @@ class C
 }
 ",
                 LanguageNames.CSharp, false,
-                "C.#GetComplex`1()",
-                "C.GetComplex():T[,][,,][][]");
-        }
-
-        [Fact]
-        public void TestResolveMethodWithComplexReturnType2()
-        {
-            VerifyMemberResolution(@"
-Class C
-	Public Shared Function $$GetComplex(Of T)() As T()()(,,)(,)
-		Return Nothing
-	End Function
-End Class
-",
-                LanguageNames.VisualBasic, false,
                 "C.#GetComplex`1()",
                 "C.GetComplex():T[,][,,][][]");
         }
@@ -973,23 +522,6 @@ public class C<T0>
         }
 
         [Fact]
-        public void TestResolveMethodWithGenericParametersAndReturnTypeFromContainingClass2()
-        {
-            VerifyMemberResolution(@"
-Public Class C(Of T0)
-	Public Class D(Of T1)
-		Public Function $$M(Of T2, T3)(a As T0, b As T1, c As T2) As T3
-			Return Nothing
-		End Function
-	End Class
-End Class
-",
-                LanguageNames.VisualBasic, false,
-                "C`1+D`1.#M`2(!0,!1,!!0)",
-                "C`1+D`1.M(T0,T1,T2):T3");
-        }
-
-        [Fact]
         public void TestResolveIndexerWithGenericParametersTypeFromContainingClass1()
         {
             VerifyMemberResolution(@"
@@ -1005,25 +537,6 @@ public class C<T0>
 }
 ",
                 LanguageNames.CSharp, false,
-                "C`1+D`1.#Item[!1]",
-                "C`1+D`1.Item[!1]:!0");
-        }
-
-        [Fact]
-        public void TestResolveIndexerWithGenericParametersTypeFromContainingClass2()
-        {
-            VerifyMemberResolution(@"
-Public Class C(Of T0)
-	Public Class D(Of T1)
-		Public Default ReadOnly Property $$Item(a As T1) As T0
-			Get
-				Return Nothing
-			End Get
-		End Property
-	End Class
-End Class
-",
-                LanguageNames.VisualBasic, false,
                 "C`1+D`1.#Item[!1]",
                 "C`1+D`1.Item[!1]:!0");
         }
@@ -1050,24 +563,6 @@ class C
         }
 
         [Fact]
-        public void TestResolveMethodOnOutParameter2()
-        {
-            VerifyMemberResolution(@"
-Class C
-	Private Sub M0(x As Integer)
-	End Sub
-
-	Private Sub $$M1(ByRef x As Integer)
-		x = 1
-	End Sub
-End Class
-",
-                LanguageNames.VisualBasic, false,
-                "C.#M1(System.Int32&)",
-                "C.M1(System.Int32&):System.Void");
-        }
-
-        [Fact]
         public void TestResolveMethodWithInstantiatedGenericParameterAndReturnType1()
         {
             VerifyMemberResolution(@"
@@ -1083,23 +578,6 @@ class C<T3>
 }
 ",
                 LanguageNames.CSharp, false,
-                "C.#M`1(G`2<System.Double,System.Double>,G`2<!0,!!0[]>)",
-                "C.M(G`2<System.Double,System.Double>,G`2<T3,T4[]>):G`2<System.Int32,System.Int32>");
-        }
-
-        [Fact]
-        public void TestResolveMethodWithInstantiatedGenericParameterAndReturnType2()
-        {
-            VerifyMemberResolution(@"
-Class G(Of T0, T1)
-End Class
-
-Class C(Of T3)
-	Private Function $$M(Of T4)(g As G(Of Double, Double), h As G(Of T3, T4())) As G(Of Integer, Integer)
-	End Function
-End Class
-",
-                LanguageNames.VisualBasic, false,
                 "C.#M`1(G`2<System.Double,System.Double>,G`2<!0,!!0[]>)",
                 "C.M(G`2<System.Double,System.Double>,G`2<T3,T4[]>):G`2<System.Int32,System.Int32>");
         }
@@ -1121,20 +599,6 @@ namespace @namespace
         }
 
         [Fact]
-        public void TestResolveEscapedName2()
-        {
-            VerifyMemberResolution(@"
-Namespace [Namespace]
-	Class [Class]
-		Private $$[If] As Integer
-	End Class
-End Namespace
-",
-                LanguageNames.VisualBasic, false,
-                "Namespace.Class.If");
-        }
-
-        [Fact]
         public void TestResolveMethodIgnoresConvention1()
         {
             VerifyMemberResolution(@"
@@ -1144,23 +608,6 @@ class C
 }
 ",
             LanguageNames.CSharp, false,
-            "C.#[vararg]Goo(System.String)",
-            "C.#[cdecl]Goo(System.String)",
-            "C.#[fastcall]Goo(System.String)",
-            "C.#[stdcall]Goo(System.String)",
-            "C.#[thiscall]Goo(System.String)");
-        }
-
-        [Fact]
-        public void TestResolveMethodIgnoresConvention2()
-        {
-            VerifyMemberResolution(@"
-Class C
-    Private Function $$Goo(x As String) As String
-End Function
-End Class
-",
-            LanguageNames.VisualBasic, false,
             "C.#[vararg]Goo(System.String)",
             "C.#[cdecl]Goo(System.String)",
             "C.#[fastcall]Goo(System.String)",
@@ -1192,30 +639,6 @@ public class C<T0>
                 "C`1+D`1+M`2(T0,T4,T2)", // '+' instead of '.' delimiter
                 "C`1.D`1.M`2(T0,T4,T2)", // '.' instead of '+' delimiter
                 "C`1+D`1.@namespace", // Escaped name
-                "C`1+D`1.#[blah]M`2(!0,!1,!!0)"); // Invalid calling convention
-        }
-
-        [Fact]
-        public void TestNoResolutionForMalformedNames2()
-        {
-            VerifyNoMemberResolution(@"
-Public Class C(Of T0)
-	Public Class D(Of T1)
-		Private [Namespace] As Integer
-
-		Public Function M(Of T2, T3)(a As T0, b As T1, c As T2) As T3
-			Return Nothing
-		End Function
-	End Class
-End Class
-",
-                LanguageNames.VisualBasic, false,
-                "C`1+D`1.#M`2(!0,!1,!!0", // Missing close paren 
-                "C`1+D`1.M`2(T0,T1,T2):", // Missing return type
-                "C`1+D`1.M`2(T0,T1,T2", // Missing close paren
-                "C`1+D`1+M`2(T0,T1,T2)", // '+' instead of '.' delimiter
-                "C`1.D`1.M`2(T0,T1,T2)", // '.' instead of '+' delimiter
-                "C`1+D`1.[Namespace]", // Escaped name
                 "C`1+D`1.#[blah]M`2(!0,!1,!!0)"); // Invalid calling convention
         }
 
@@ -1379,21 +802,10 @@ End Class
         {
             string projectName = "TestProject";
 
-            if (language == LanguageNames.CSharp)
-            {
-                return CSharpCompilation.Create(
+            return CSharpCompilation.Create(
                     projectName,
                     syntaxTrees: new[] { syntaxTree },
                     references: new[] { TestBase.MscorlibRef });
-            }
-            else
-            {
-                return VisualBasicCompilation.Create(
-                    projectName,
-                    options: new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary, rootNamespace: rootNamespace),
-                    syntaxTrees: new[] { syntaxTree },
-                    references: new[] { TestBase.MscorlibRef });
-            }
         }
 
         private static Compilation CreateCompilation(string source, string language, string rootNamespace)
@@ -1405,9 +817,7 @@ End Class
         {
             string fileName = language == LanguageNames.CSharp ? "Test.cs" : "Test.vb";
 
-            return language == LanguageNames.CSharp ?
-                CSharpSyntaxTree.ParseText(source, path: fileName) :
-                VisualBasicSyntaxTree.ParseText(source, path: fileName);
+            return CSharpSyntaxTree.ParseText(source, path: fileName);
         }
     }
 }
