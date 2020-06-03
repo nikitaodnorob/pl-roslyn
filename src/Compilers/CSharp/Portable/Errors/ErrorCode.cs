@@ -1735,6 +1735,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         ERR_DuplicateNullSuppression = 8715,
         ERR_DefaultLiteralNoTargetType = 8716,
 
+        ERR_LoopCounterNoInteger = 8730,
+
         ERR_ReAbstractionInNoPIAType = 8750,
 
         #endregion diagnostics introduced for C# 8.0

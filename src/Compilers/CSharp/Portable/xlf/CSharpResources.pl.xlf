@@ -387,6 +387,11 @@
         <target state="translated">Metoda „{0}” z blokiem iteratora musi być oznaczona jako „async”, aby zwrócić „{1}”</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_LoopCounterNoInteger">
+        <source>LOOP parameter must be integer expression</source>
+        <target state="new">LOOP parameter must be integer expression</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_MethFuncPtrMismatch">
         <source>No overload for '{0}' matches function pointer '{1}'</source>
         <target state="new">No overload for '{0}' matches function pointer '{1}'</target>

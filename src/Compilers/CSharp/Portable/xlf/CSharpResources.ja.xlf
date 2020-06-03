@@ -387,6 +387,11 @@
         <target state="translated">反復子ブロックを伴うメソッド '{0}' が '{1}' を返すには 'async' でなければなりません。</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_LoopCounterNoInteger">
+        <source>LOOP parameter must be integer expression</source>
+        <target state="new">LOOP parameter must be integer expression</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_MethFuncPtrMismatch">
         <source>No overload for '{0}' matches function pointer '{1}'</source>
         <target state="new">No overload for '{0}' matches function pointer '{1}'</target>

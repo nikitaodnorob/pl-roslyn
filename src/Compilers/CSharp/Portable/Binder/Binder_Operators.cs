@@ -419,7 +419,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             return false;
         }
 
-        private BoundExpression BindSimpleBinaryOperator(BinaryExpressionSyntax node, DiagnosticBag diagnostics)
+        protected virtual BoundExpression BindSimpleBinaryOperator(BinaryExpressionSyntax node, DiagnosticBag diagnostics)
         {
             // The simple binary operators are left-associative, and expressions of the form
             // a + b + c + d .... are relatively common in machine-generated code. The parser can handle

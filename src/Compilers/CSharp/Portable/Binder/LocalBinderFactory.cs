@@ -422,7 +422,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             ExpressionSyntax condition = node.Condition;
             if (condition != null)
             {
-                binder = new ExpressionVariableBinder(condition, binder);
+                binder = new MyExpressionVariableBinder(condition, binder);
                 AddToMap(condition, binder);
                 Visit(condition, binder);
             }

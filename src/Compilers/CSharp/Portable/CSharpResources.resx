@@ -6032,7 +6032,10 @@ To remove the warning, you can use /reference instead (set the Embed Interop Typ
     <value>'{0}' is not a valid calling convention for a function pointer. Valid conventions are 'cdecl', 'managed', 'thiscall', and 'stdcall'.</value>
   </data>
   <data name="ERR_InternalError" xml:space="preserve">
-    <value>Internal error in the C# compiler.</value>
+    <value>Internal error in the C# compiler.</value> 
+  </data>
+  <data name="ERR_LoopCounterNoInteger" xml:space="preserve">
+    <value>LOOP parameter must be integer expression</value> 
   </data>
   <data name="IDS_FeatureAsyncUsing" xml:space="preserve">
     <value>asynchronous using</value>

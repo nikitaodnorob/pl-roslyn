@@ -387,6 +387,11 @@
         <target state="translated">{1}'을(를) 반환하려면 반복기 블록이 있는 '{0}' 메서드가 '비동기'여야 합니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_LoopCounterNoInteger">
+        <source>LOOP parameter must be integer expression</source>
+        <target state="new">LOOP parameter must be integer expression</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_MethFuncPtrMismatch">
         <source>No overload for '{0}' matches function pointer '{1}'</source>
         <target state="new">No overload for '{0}' matches function pointer '{1}'</target>

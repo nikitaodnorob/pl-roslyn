@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.CodeAnalysis.CSharp
 {
-    internal sealed class ExpressionVariableBinder : LocalScopeBinder
+    internal class ExpressionVariableBinder : LocalScopeBinder
     {
         internal override SyntaxNode ScopeDesignator { get; }
 

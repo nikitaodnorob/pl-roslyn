@@ -387,6 +387,11 @@
         <target state="translated">Чтобы возвращать "{1}", метод "{0}" с блоком итератора должен быть асинхронным ("async").</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_LoopCounterNoInteger">
+        <source>LOOP parameter must be integer expression</source>
+        <target state="translated">Параметр цикла LOOP должен быть выражением целого типа</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_MethFuncPtrMismatch">
         <source>No overload for '{0}' matches function pointer '{1}'</source>
         <target state="new">No overload for '{0}' matches function pointer '{1}'</target>
