@@ -45,7 +45,7 @@ namespace Microsoft.CodeAnalysis
             public override string GetMessage(IFormatProvider? formatProvider = null)
                 => _originalUnsuppressedDiagnostic.GetMessage(formatProvider);
 
-            internal override IReadOnlyList<object?> Arguments
+            public override IReadOnlyList<object?> Arguments
             {
                 get { return _originalUnsuppressedDiagnostic.Arguments; }
             }

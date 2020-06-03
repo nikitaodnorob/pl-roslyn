@@ -27,6 +27,8 @@ Microsoft.CodeAnalysis.Operations.ITypePatternOperation.MatchedType.get -> Micro
 Microsoft.CodeAnalysis.SymbolKind.FunctionPointer = 20 -> Microsoft.CodeAnalysis.SymbolKind
 Microsoft.CodeAnalysis.TypeKind.FunctionPointer = 13 -> Microsoft.CodeAnalysis.TypeKind
 static Microsoft.CodeAnalysis.AnalyzerConfigSet.Create<TList>(TList analyzerConfigs, out System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Diagnostic> diagnostics) -> Microsoft.CodeAnalysis.AnalyzerConfigSet
+virtual Microsoft.CodeAnalysis.Diagnostic.Arguments.get -> System.Collections.Generic.IReadOnlyList<object>
+virtual Microsoft.CodeAnalysis.Diagnostic.Code.get -> int
 virtual Microsoft.CodeAnalysis.Operations.OperationVisitor.VisitBinaryPattern(Microsoft.CodeAnalysis.Operations.IBinaryPatternOperation operation) -> void
 virtual Microsoft.CodeAnalysis.Operations.OperationVisitor.VisitNegatedPattern(Microsoft.CodeAnalysis.Operations.INegatedPatternOperation operation) -> void
 virtual Microsoft.CodeAnalysis.Operations.OperationVisitor.VisitRelationalPattern(Microsoft.CodeAnalysis.Operations.IRelationalPatternOperation operation) -> void

@@ -466,9 +466,9 @@ namespace Microsoft.CodeAnalysis
         internal virtual ProgrammaticSuppressionInfo? ProgrammaticSuppressionInfo { get { return null; } }
 
         // compatibility
-        internal virtual int Code { get { return 0; } }
+        public virtual int Code { get { return 0; } }
 
-        internal virtual IReadOnlyList<object?> Arguments
+        public virtual IReadOnlyList<object?> Arguments
         {
             get { return SpecializedCollections.EmptyReadOnlyList<object?>(); }
         }

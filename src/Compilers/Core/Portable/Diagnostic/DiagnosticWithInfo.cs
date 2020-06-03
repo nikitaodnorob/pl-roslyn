@@ -68,7 +68,7 @@ namespace Microsoft.CodeAnalysis
         }
 
 
-        internal sealed override int Code
+        public sealed override int Code
         {
             get { return this.Info.Code; }
         }
@@ -104,7 +104,7 @@ namespace Microsoft.CodeAnalysis
             return this.Info.GetMessage(formatProvider);
         }
 
-        internal override IReadOnlyList<object?> Arguments
+        public override IReadOnlyList<object?> Arguments
         {
             get { return this.Info.Arguments; }
         }

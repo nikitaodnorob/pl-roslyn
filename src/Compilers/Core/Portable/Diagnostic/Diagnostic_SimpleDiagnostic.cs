@@ -109,7 +109,7 @@ namespace Microsoft.CodeAnalysis
                 }
             }
 
-            internal override IReadOnlyList<object?> Arguments
+            public override IReadOnlyList<object?> Arguments
             {
                 get { return _messageArgs; }
             }
