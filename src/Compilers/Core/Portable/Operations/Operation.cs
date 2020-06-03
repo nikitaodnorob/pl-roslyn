@@ -108,7 +108,7 @@ namespace Microsoft.CodeAnalysis
         public ITypeSymbol Type { get; }
 
         /// <summary>
-        /// The source language of the IOperation. Possible values are <see cref="LanguageNames.CSharp"/> and <see cref="LanguageNames.VisualBasic"/>.
+        /// The source language of the IOperation. Possible values are <see cref="LanguageNames.CSharp"/>.
         /// </summary>
 
         public string Language

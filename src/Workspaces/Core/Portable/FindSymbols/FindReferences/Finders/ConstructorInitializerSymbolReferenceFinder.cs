@@ -38,11 +38,6 @@ namespace Microsoft.CodeAnalysis.FindSymbols.Finders
                     {
                         return true;
                     }
-                    else if (project.Language == LanguageNames.VisualBasic && index.ProbablyContainsIdentifier("New"))
-                    {
-                        // "New" can be explicitly accessed in xml doc comments to reference a constructor.
-                        return true;
-                    }
                 }
 
                 return false;
@@ -60,11 +55,6 @@ namespace Microsoft.CodeAnalysis.FindSymbols.Finders
             var typeName = methodSymbol.ContainingType.Name;
 
             var tokens = await document.GetConstructorInitializerTokensAsync(semanticModel, cancellationToken).ConfigureAwait(false);
-            if (semanticModel.Language == LanguageNames.VisualBasic)
-            {
-                tokens = tokens.Concat(await GetIdentifierOrGlobalNamespaceTokensWithTextAsync(
-                    document, semanticModel, "New", cancellationToken).ConfigureAwait(false)).Distinct();
-            }
 
             return FindReferencesInTokens(
                  methodSymbol,
@@ -86,10 +76,6 @@ namespace Microsoft.CodeAnalysis.FindSymbols.Finders
                 {
                     var containingType = semanticModel.GetEnclosingNamedType(t.SpanStart, cancellationToken);
                     return containingType != null && containingType.Name == typeName;
-                }
-                else if (semanticModel.Language == LanguageNames.VisualBasic && t.IsPartOfStructuredTrivia())
-                {
-                    return true;
                 }
 
                 return false;

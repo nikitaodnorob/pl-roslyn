@@ -6215,15 +6215,6 @@ namespace System
 
             Assert.Throws<ArgumentException>(() => comp.CreateTupleTypeSymbol(underlyingType: vt2));
 
-            var vbComp = CreateVisualBasicCompilation("");
-            Assert.Throws<ArgumentNullException>(() => comp.CreateErrorTypeSymbol(null, null, 2));
-            Assert.Throws<ArgumentException>(() => comp.CreateErrorTypeSymbol(null, "a", -1));
-            Assert.Throws<ArgumentException>(() => comp.CreateErrorTypeSymbol(vbComp.GlobalNamespace, "a", 1));
-
-            Assert.Throws<ArgumentNullException>(() => comp.CreateErrorNamespaceSymbol(null, "a"));
-            Assert.Throws<ArgumentNullException>(() => comp.CreateErrorNamespaceSymbol(vbComp.GlobalNamespace, null));
-            Assert.Throws<ArgumentException>(() => comp.CreateErrorNamespaceSymbol(vbComp.GlobalNamespace, "a"));
-
             var ns = comp.CreateErrorNamespaceSymbol(comp.GlobalNamespace, "a");
             Assert.Equal("a", ns.ToTestDisplayString());
             Assert.False(ns.IsGlobalNamespace);
@@ -6299,40 +6290,6 @@ namespace System
             var e = Assert.Throws<ArgumentException>(() => comp.CreateTupleTypeSymbol(vt2, ImmutableArray.Create("123", "")));
             Assert.Contains(CodeAnalysisResources.TupleElementNameEmpty, e.Message);
             Assert.Contains("elementNames[1]", e.Message);
-        }
-
-        [Fact]
-        public void CreateTupleTypeSymbol_VisualBasicElements()
-        {
-            var vbSource = @"Public Class C
-End Class";
-
-            var vbComp = CreateVisualBasicCompilation("VB", vbSource,
-                                compilationOptions: new VisualBasic.VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-
-            vbComp.VerifyDiagnostics();
-            INamedTypeSymbol vbType = (INamedTypeSymbol)vbComp.GlobalNamespace.GetMembers("C").Single();
-
-            var comp = CSharpCompilation.Create("test", references: new[] { MscorlibRef });
-            var e = Assert.Throws<ArgumentException>(() => comp.CreateTupleTypeSymbol(vbType, default(ImmutableArray<string>)));
-            Assert.Contains(CSharpResources.NotACSharpSymbol, e.Message);
-        }
-
-        [Fact]
-        public void CreateAnonymousTypeSymbol_VisualBasicElements()
-        {
-            var vbSource = @"Public Class C
-End Class";
-
-            var vbComp = CreateVisualBasicCompilation("VB", vbSource,
-                                compilationOptions: new VisualBasic.VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-
-            vbComp.VerifyDiagnostics();
-            var vbType = (ITypeSymbol)vbComp.GlobalNamespace.GetMembers("C").Single();
-
-            var comp = CSharpCompilation.Create("test", references: new[] { MscorlibRef });
-            var e = Assert.Throws<ArgumentException>(() => comp.CreateAnonymousTypeSymbol(ImmutableArray.Create(vbType), ImmutableArray.Create("m1")));
-            Assert.Contains(CSharpResources.NotACSharpSymbol, e.Message);
         }
 
         [Fact]
@@ -6569,24 +6526,6 @@ End Class";
             // reserved identifiers
             var tuple3 = comp.CreateTupleTypeSymbol(ImmutableArray.Create(intType, intType), ImmutableArray.Create("return", "class"));
             Assert.Equal(new[] { "return", "class" }, GetTupleElementNames(tuple3));
-        }
-
-        [Fact]
-        public void CreateTupleTypeSymbol2_VisualBasicElements()
-        {
-            var vbSource = @"Public Class C
-End Class";
-
-            var vbComp = CreateVisualBasicCompilation("VB", vbSource,
-                                compilationOptions: new VisualBasic.VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-
-            vbComp.VerifyDiagnostics();
-            ITypeSymbol vbType = (ITypeSymbol)vbComp.GlobalNamespace.GetMembers("C").Single();
-
-            var comp = CSharpCompilation.Create("test", references: new[] { MscorlibRef });
-            INamedTypeSymbol intType = comp.GetSpecialType(SpecialType.System_String).GetPublicSymbol();
-
-            Assert.Throws<ArgumentException>(() => comp.CreateTupleTypeSymbol(ImmutableArray.Create(intType, vbType), default(ImmutableArray<string>)));
         }
 
         [Fact]
@@ -26839,28 +26778,6 @@ class Program
             VerifyTypeFromCSharp((NamedTypeSymbol)((FieldSymbol)containingType.GetMembers("F4").Single()).Type, TupleUnderlyingTypeValue.Distinct, TupleUnderlyingTypeValue.Distinct, TupleUnderlyingTypeValue.Null, TupleUnderlyingTypeValue.Null, "(System.Object, System.Object B, System.Object, System.Object D, System.Object, System.Object F, System.Object, System.Object H)", "(System.Object, B As System.Object, System.Object, D As System.Object, System.Object, F As System.Object, System.Object, H As System.Object)");
         }
 
-        [Fact]
-        [WorkItem(41702, "https://github.com/dotnet/roslyn/issues/41702")]
-        public void TupleUnderlyingType_FromVisualBasic()
-        {
-            var source =
-@"Class Program
-    Private F0 As System.ValueTuple
-    Private F1 As (Integer, Integer)
-    Private F2 As (A As Integer, B As Integer)
-    Private F3 As (Object, Object, Object, Object, Object, Object, Object, Object)
-    Private F4 As (Object, B As Object, Object, D As Object, Object, F As Object, Object, H As Object)
-End Class";
-            var comp = CreateVisualBasicCompilation(source, referencedAssemblies: TargetFrameworkUtil.GetReferences(TargetFramework.Standard));
-            comp.VerifyDiagnostics();
-            var containingType = comp.GlobalNamespace.GetTypeMembers("Program").Single();
-            VerifyTypeFromVisualBasic((INamedTypeSymbol)((IFieldSymbol)containingType.GetMembers("F0").Single()).Type, TupleUnderlyingTypeValue.Null, "System.ValueTuple", "System.ValueTuple");
-            VerifyTypeFromVisualBasic((INamedTypeSymbol)((IFieldSymbol)containingType.GetMembers("F1").Single()).Type, TupleUnderlyingTypeValue.Distinct, "(System.Int32, System.Int32)", "(System.Int32, System.Int32)");
-            VerifyTypeFromVisualBasic((INamedTypeSymbol)((IFieldSymbol)containingType.GetMembers("F2").Single()).Type, TupleUnderlyingTypeValue.Distinct, "(System.Int32 A, System.Int32 B)", "(A As System.Int32, B As System.Int32)");
-            VerifyTypeFromVisualBasic((INamedTypeSymbol)((IFieldSymbol)containingType.GetMembers("F3").Single()).Type, TupleUnderlyingTypeValue.Distinct, "(System.Object, System.Object, System.Object, System.Object, System.Object, System.Object, System.Object, System.Object)", "(System.Object, System.Object, System.Object, System.Object, System.Object, System.Object, System.Object, System.Object)");
-            VerifyTypeFromVisualBasic((INamedTypeSymbol)((IFieldSymbol)containingType.GetMembers("F4").Single()).Type, TupleUnderlyingTypeValue.Distinct, "(System.Object, System.Object B, System.Object, System.Object D, System.Object, System.Object F, System.Object, System.Object H)", "(System.Object, B As System.Object, System.Object, D As System.Object, System.Object, F As System.Object, System.Object, H As System.Object)");
-        }
-
         private enum TupleUnderlyingTypeValue
         {
             Null,
@@ -26877,7 +26794,7 @@ End Class";
             string expectedCSharp,
             string expectedVisualBasic)
         {
-            VerifyDisplay(type.GetPublicSymbol(), expectedCSharp, expectedVisualBasic);
+            VerifyDisplay(type.GetPublicSymbol(), expectedCSharp);
             VerifyInternalType(type, expectedInternalValue);
             VerifyPublicType(type.GetPublicSymbol(), expectedPublicValue);
             type = type.OriginalDefinition;
@@ -26891,15 +26808,14 @@ End Class";
             string expectedCSharp,
             string expectedVisualBasic)
         {
-            VerifyDisplay(type, expectedCSharp, expectedVisualBasic);
+            VerifyDisplay(type, expectedCSharp);
             VerifyPublicType(type, expectedValue);
             VerifyPublicType(type.OriginalDefinition, expectedValue);
         }
 
-        private static void VerifyDisplay(INamedTypeSymbol type, string expectedCSharp, string expectedVisualBasic)
+        private static void VerifyDisplay(INamedTypeSymbol type, string expectedCSharp)
         {
             Assert.Equal(expectedCSharp, CSharp.SymbolDisplay.ToDisplayString(type, SymbolDisplayFormat.TestFormat));
-            Assert.Equal(expectedVisualBasic, VisualBasic.SymbolDisplay.ToDisplayString(type, SymbolDisplayFormat.TestFormat));
         }
 
         private static void VerifyInternalType(NamedTypeSymbol type, TupleUnderlyingTypeValue expectedValue)

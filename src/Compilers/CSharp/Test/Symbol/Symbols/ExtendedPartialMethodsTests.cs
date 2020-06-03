@@ -2493,32 +2493,6 @@ public partial class C : I
         }
 
         [Fact]
-        public void ConsumeExtendedPartialFromVB()
-        {
-            var csharp = @"
-public partial class C
-{
-    public virtual partial int M1();
-    public virtual partial int M1() => 42;
-}";
-            var comp = CreateCompilation(csharp, parseOptions: TestOptions.RegularWithExtendedPartialMethods);
-            comp.VerifyDiagnostics();
-
-            var vb = @"
-Public Class D
-    Inherits C
-
-    Public Overrides Function M1() As Integer
-        Return 123
-    End Function
-End Class
-";
-
-            var vbComp = CreateVisualBasicCompilation(vb, referencedAssemblies: TargetFrameworkUtil.GetReferences(TargetFramework.Standard).Add(comp.EmitToImageReference()));
-            vbComp.VerifyDiagnostics();
-        }
-
-        [Fact]
         public void Override_SingleDimensionArraySizesInMetadata()
         {
 

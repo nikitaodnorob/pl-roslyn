@@ -49,7 +49,7 @@ namespace Microsoft.CodeAnalysis
         IEnumerable<IOperation> Children { get; }
 
         /// <summary>
-        /// The source language of the IOperation. Possible values are <see cref="LanguageNames.CSharp"/> and <see cref="LanguageNames.VisualBasic"/>.
+        /// The source language of the IOperation. Possible values are <see cref="LanguageNames.CSharp"/>.
         /// </summary>
         string Language { get; }
 

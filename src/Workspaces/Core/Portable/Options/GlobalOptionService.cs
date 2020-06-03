@@ -121,11 +121,6 @@ namespace Microsoft.CodeAnalysis.Options
                     editorConfigToOptionsStorage = ref _csharpEditorConfigKeysToOptions!;
                     break;
 
-                case LanguageNames.VisualBasic:
-                    // Suppression required due to https://github.com/dotnet/roslyn/issues/42018
-                    editorConfigToOptionsStorage = ref _visualBasicEditorConfigKeysToOptions!;
-                    break;
-
                 case null:
                 case "":
                     // Suppression required due to https://github.com/dotnet/roslyn/issues/42018

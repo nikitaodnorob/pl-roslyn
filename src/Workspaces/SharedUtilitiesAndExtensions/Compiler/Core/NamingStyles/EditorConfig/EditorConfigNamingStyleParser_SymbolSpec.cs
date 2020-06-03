@@ -413,24 +413,10 @@ namespace Microsoft.CodeAnalysis.Diagnostics.Analyzers.NamingStyles
                     return "protected";
 
                 case Accessibility.Internal:
-                    if (languageName == LanguageNames.VisualBasic)
-                    {
-                        return "friend";
-                    }
-                    else
-                    {
-                        return "internal";
-                    }
+                    return "internal";
 
                 case Accessibility.ProtectedOrInternal:
-                    if (languageName == LanguageNames.VisualBasic)
-                    {
-                        return "protected_friend";
-                    }
-                    else
-                    {
-                        return "protected_internal";
-                    }
+                    return "protected_internal";
 
                 case Accessibility.Public:
                     return "public";
@@ -460,24 +446,10 @@ namespace Microsoft.CodeAnalysis.Diagnostics.Analyzers.NamingStyles
             switch (modifier.ModifierKindWrapper)
             {
                 case ModifierKindEnum.IsAbstract:
-                    if (languageName == LanguageNames.VisualBasic)
-                    {
-                        return "must_inherit";
-                    }
-                    else
-                    {
-                        return "abstract";
-                    }
+                    return "abstract";
 
                 case ModifierKindEnum.IsStatic:
-                    if (languageName == LanguageNames.VisualBasic)
-                    {
-                        return "shared";
-                    }
-                    else
-                    {
-                        return "static";
-                    }
+                    return "static";
 
                 case ModifierKindEnum.IsAsync:
                     return "async";
