@@ -12,7 +12,7 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp
 {
-    internal sealed class BlockBinder : LocalScopeBinder
+    internal class BlockBinder : LocalScopeBinder
     {
         private readonly BlockSyntax _block;
 
