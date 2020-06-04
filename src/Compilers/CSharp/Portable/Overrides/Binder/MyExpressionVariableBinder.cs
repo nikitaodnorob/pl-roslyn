@@ -10,8 +10,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected override BoundExpression BindSimpleBinaryOperator(BinaryExpressionSyntax node, DiagnosticBag diagnostics)
         {
-            BoundExpression result = base.BindSimpleBinaryOperator(node, diagnostics);
-
             if (node.Left is IdentifierNameSyntax)
             {
                 var identifierText = (node.Left as IdentifierNameSyntax).Identifier.Text;
@@ -24,7 +22,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            return result;
+            return base.BindSimpleBinaryOperator(node, diagnostics);
         }
     }
 }
